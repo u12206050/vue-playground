@@ -2,7 +2,7 @@
   <div class="login" v-if="state == 'login'">
     <input type="text" v-model="username" placeholder="username">
     <input type="password" v-model="password" placeholder="password">
-    <button v-if="password" v-on:click="submit">Login</button>
+    <md-button class="md-raised md-dense" v-if="password" v-on:click.native="submit">Login</md-button>
   </div>
   <div class="checking" v-else-if="state == 'checking'">
     <h3>Checking ...</h3>
@@ -12,7 +12,7 @@
       <h3>{{ answer.answer }}</h3>
       <img v-bind:src="answer.image">
     </div>
-    <button v-on:click="state = 'login'">Retry that</button>
+    <md-button class="md-raised md-dense" v-on:click.native="state = 'login'">Retry that</md-button>
   </div>
   <div class="error" v-else-if="state == 'error'">
     <p>Error: {{ error }}</p>
@@ -38,7 +38,7 @@ export default {
     }
   }, */
   methods: {
-    submit: function () {
+    submit () {
       this.answer = null
       this.state = 'checking'
       let self = this
@@ -66,7 +66,7 @@ input {
 }
 
 input:active, input:focus {
-  border: 1px solid #41b883;
+  border: 1px solid #00b0e5;
   outline: 0;
 }
 
@@ -76,7 +76,7 @@ input:active, input:focus {
 }
 
 .response {
-  background: lightgreen;
+  background: lightblue;
 }
 
 .error {

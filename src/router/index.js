@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from 'components/Hello'
-const Login = resolve => require(['components/login.vue'], resolve)
+import CardSection from 'components/CardSection'
+const Login = resolve => require(['components/Login.vue'], resolve)
 
 Vue.use(Router)
 
@@ -17,6 +18,11 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/section',
+      name: 'Section',
+      component: CardSection
     }
   ]
 })

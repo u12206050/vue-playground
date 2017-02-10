@@ -1,5 +1,5 @@
 <template>
-  <md-theme md-name="blue" v-if="activeMenu">
+  <md-theme md-name="side-menu" v-if="activeMenu">
     <md-sidenav class="md-right" ref="menu" @open="open()" @close="close()">
       <div class="menu_title">
         <button class="btn-l" v-if="activeMenu.__parent" v-on:click="activeMenu = activeMenu.__parent"><md-icon class="icon">keyboard_arrow_left</md-icon></button>
@@ -10,7 +10,7 @@
         <md-list-item v-for="link of layer.links" class="uhov">
           <p v-if="link.url" v-on:click="closeMenu()">
             <router-link v-if="!link.external" :to="link.url" class="alink-internal">{{link.title}}</router-link>
-            <a v-else-if="link.external" v-on:click="closeMenu()" target="_blank" :href="link.url" class="alink-external">{{link.title}}</a>
+            <a v-else-if="link.external" target="_blank" :href="link.url" class="alink-external">{{link.title}}</a>
           </p>
           <p v-else-if="!link.url">{{link.title}}</p>
           <button v-if="link.links && link.links.length" v-on:click="activeMenu = link"><span>{{link.links.length}}</span><md-icon class="icon">keyboard_arrow_right</md-icon></button>
@@ -37,20 +37,29 @@ export default {
     return {
       menuData: {},
       activeMenu: null,
-      layers: null
+      layers: null,
+      menuApi: require('../settings.js').menuApi
     }
   },
   watch: {
     toggleMenu: function (state) {
-      if (state) {
-        this.openMenu()
-      } else this.closeMenu()
+      this.toggle(state)
     }
   },
   created () {
     this.loadMenu()
+    var self = this
+    window.eventBus.$on('side-menu', function (state) {
+      self.toggle(state)
+    })
   },
   methods: {
+    toggle (state) {
+      if (!this.activeMenu) return
+      if (state) {
+        this.openMenu()
+      } else this.closeMenu()
+    },
     openMenu () {
       this.$refs.menu.open()
     },
@@ -59,14 +68,13 @@ export default {
     },
     loadMenu () {
       var self = this
-      axios.get('http://demo3388642.mockable.io/menus/main')
+      axios.get(this.menuApi)
       .then(function (response) {
         self.menuData = response.data
         self.generateLayers()
       })
       .catch(function (error) {
-        self.error = error.response.status
-        self.state = 'error'
+        console.warn('SideMenu has error: ' + error.message || error.response.status)
       })
     },
     generateLayers () {
@@ -87,13 +95,13 @@ export default {
     },
     open () {
       /* menuResource.getMenu$('Hovedmeny').subscribe( data => {
-        if (!data) return;
-        data.title = 'Meny';
-        this.menuData = data;
-        this.layers = [];
-        getLayers(this.menuData);
-        this.activeMenu = this.menuData;
-      }); */
+        if (!data) return
+        data.title = 'Meny'
+        this.menuData = data
+        this.layers = []
+        getLayers(this.menuData)
+        this.activeMenu = this.menuData
+      }) */
       this.$emit('state', 1)
     },
     close () {
@@ -105,14 +113,9 @@ export default {
 </script>
 
 <style lang="scss">
-$red: #cc0066;
-$offwhite: #f5f5f5;
-$blue: #00b0e5;
-$text: #000;
-$grey: #505050;
-$title: #303030;
+@import "../assets/mixin";
 
-.md-theme-blue.md-sidenav {
+.md-theme-side-menu.md-sidenav {
   .md-sidenav-content, .md-list {
     color: #fff;
     background: $blue;

@@ -7,9 +7,12 @@ html, body {
     margin: 0;
     overflow-x: hidden;
     min-width: 400px;
+    font-size: 100%;
 }
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     font-family: "Agenda Light","Open Sans",Helvetica,Arial,sans-serif;
     font-weight: 300;
@@ -56,4 +59,46 @@ button {
 
 .uhov:hover:after, .uhov:focus:after, .uhov:hover:before, .uhov:focus:before {
     width: 55%;
+}
+
+.md-theme-default :not(input):not(textarea)::selection {
+    background: #00b0e5 !important;
+    color: #ffffff !important;
+}
+
+/* Transitions */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .5s
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0
+}
+
+.bounce-enter-active {
+  animation: bounce-in .5s;
+}
+.bounce-leave-active {
+  animation: bounce-out .5s;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes bounce-out {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(0);
+  }
 }
