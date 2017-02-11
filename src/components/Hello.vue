@@ -1,12 +1,14 @@
 <template>
-  <div class="hello">
-    <img src="../assets/logo.svg">
-    <h1>{{ msg }}</h1>
-    <transition name="bounce">
-      <login v-if="viewLogin"></login>
-    </transition>
-    <md-button v-if="!viewLogin" class="md-raised md-dense" v-on:click.native="viewLogin = true">Show Login</md-button>
-  </div>
+  <transition name="slide">
+    <div class="hello" v-if="show">
+      <img src="../assets/logo.svg">
+      <h1>{{ msg }}</h1>
+      <transition name="bounce">
+        <login v-if="viewLogin"></login>
+      </transition>
+      <md-button v-if="!viewLogin" class="md-raised md-dense" v-on:click.native="viewLogin = true">Show Login</md-button>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -21,8 +23,14 @@ export default {
   data () {
     return {
       msg: 'Welcome to Vue.js',
-      viewLogin: false
+      viewLogin: false,
+      show: false
     }
+  },
+  created () {
+    setTimeout(() => {
+      this.show = true
+    }, 50)
   }
 }
 </script>

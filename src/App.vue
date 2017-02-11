@@ -36,8 +36,8 @@ export default {
           external: false
         },
         {
-          url: '/section',
-          title: 'Sections',
+          url: '/page/article',
+          title: 'Article Template',
           external: false
         }
       ]

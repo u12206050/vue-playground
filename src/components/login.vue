@@ -1,22 +1,26 @@
 <template>
-  <div class="login" v-if="state == 'login'">
-    <input type="text" v-model="username" placeholder="username">
-    <input type="password" v-model="password" placeholder="password">
-    <md-button class="md-raised md-dense" v-if="password" v-on:click.native="submit">Login</md-button>
-  </div>
-  <div class="checking" v-else-if="state == 'checking'">
-    <h3>Checking ...</h3>
-  </div>
-  <div class="response" v-else-if="state == 'response'">
-    <div v-if="answer">
-      <h3>{{ answer.answer }}</h3>
-      <img v-bind:src="answer.image">
-    </div>
-    <md-button class="md-raised md-dense" v-on:click.native="state = 'login'">Retry that</md-button>
-  </div>
-  <div class="error" v-else-if="state == 'error'">
-    <p>Error: {{ error }}</p>
-  </div>
+  <transition name="slide">
+    <span v-if="show">
+      <div class="login" v-if="state == 'login'">
+        <input type="text" v-model="username" placeholder="username">
+        <input type="password" v-model="password" placeholder="password">
+        <md-button class="md-raised md-dense" v-if="password" v-on:click.native="submit">Login</md-button>
+      </div>
+      <div class="checking" v-else-if="state == 'checking'">
+        <h3>Checking ...</h3>
+      </div>
+      <div class="response" v-else-if="state == 'response'">
+        <div v-if="answer">
+          <h3>{{ answer.answer }}</h3>
+          <img v-bind:src="answer.image">
+        </div>
+        <md-button class="md-raised md-dense" v-on:click.native="state = 'login'">Retry that</md-button>
+      </div>
+      <div class="error" v-else-if="state == 'error'">
+        <p>Error: {{ error }}</p>
+      </div>
+    </span>
+  </transition>
 </template>
 
 <script>
@@ -29,8 +33,14 @@ export default {
       username: '',
       password: '',
       state: 'login',
-      answer: null
+      answer: null,
+      show: false
     }
+  },
+  created () {
+    setTimeout(() => {
+      this.show = true
+    }, 50)
   },
   /* computed: {
     pass: function () {

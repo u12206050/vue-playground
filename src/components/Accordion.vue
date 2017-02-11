@@ -1,8 +1,8 @@
 <template>
-  <div class="accordion">
-    <ui-collapsible :open="active == 0" @open="active = 0" removeIcon="true">
+  <md-card class="accordion">
+    <ui-collapsible :open="active == 0" @open="active = 0" :removeIcon="true">
       <div slot="header">
-        <md-icon class="icon-area">info</md-icon>
+        <md-icon class="icon-area">movie</md-icon>
         <div class="title-area">
           <h3>This is title</h3>
           <p>This is byline</p>
@@ -14,9 +14,9 @@
       </div>
     </ui-collapsible>
 
-    <ui-collapsible :open="active == 1" @open="active = 1" removeIcon="true">
+    <ui-collapsible :open="active == 1" @open="active = 1" :removeIcon="true">
       <div slot="header">
-        <md-icon class="icon-area">info</md-icon>
+        <md-icon class="icon-area">hd</md-icon>
         <div class="title-area">
           <h3>This is title</h3>
         </div>
@@ -33,9 +33,9 @@
       </div>
     </ui-collapsible>
 
-    <ui-collapsible :open="active == 2" @open="active = 2" removeIcon="true">
+    <ui-collapsible :open="active == 2" @open="active = 2" :removeIcon="true">
       <div slot="header">
-        <md-icon class="icon-area">info</md-icon>
+        <md-icon class="icon-area">note</md-icon>
         <div class="title-area">
           <h3>This is title</h3>
         </div>
@@ -46,7 +46,7 @@
       </div>
     </ui-collapsible>
 
-    <ui-collapsible :open="active == 3" @open="active = 3" removeIcon="true">
+    <ui-collapsible :open="active == 3" @open="active = 3" :removeIcon="true">
       <div slot="header">
         <md-icon class="icon-area">info</md-icon>
         <div class="title-area">
@@ -60,7 +60,7 @@
       </div>
     </ui-collapsible>
     </div>
-  </div>
+  </md-card>
 </template>
 
 <script>
@@ -84,13 +84,15 @@ export default {
 
 .accordion {
   width: 100%;
+  margin: 10px;
   background: #fff;
 
   .ui-collapsible, .ui-collapsible__header {
       background: #fff;
+      margin: 0;
   }
   .ui-collapsible__header {
-    color: $blue;
+    border-top: 1px solid #eee;
 
     &-content {
       width: 100%;
@@ -106,12 +108,13 @@ export default {
       text-align: center;
     }
 
+    h3 {
+      margin: 0 5px;
+      color: $blue;
+    }
+
     .title-area {
       display: inline-block;
-
-      h3 {
-        margin: 0 5px;
-      }
 
       p {
         color: $grey;
@@ -141,9 +144,15 @@ export default {
         transform: rotate(90deg);
       }
     }
+
+    &:hover {
+      .toggle-icon {
+        transform: rotate(15deg);
+      }
+    }
   }
 
-  .is-open .toggle-icon {
+  .is-open .ui-collapsible__header .toggle-icon {
     transform: rotate(45deg);
   }
   .toggle-icon {
@@ -160,8 +169,6 @@ export default {
   .ui-collapsible__body {
     text-align: left;
     border: none;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
   }
 }
 </style>

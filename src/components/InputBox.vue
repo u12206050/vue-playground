@@ -1,21 +1,21 @@
 <template>
   <div class="search">
-    <input type="text" v-bind:placeholder="placeholder" @keyup.enter="submit" v-model="input"><button><md-icon>{{icon}}</md-icon></button>
+    <input type="text" v-bind:placeholder="placeholder" @keyup.enter="submit" v-model="value"><button><md-icon>{{icon}}</md-icon></button>
   </div>
 </template>
 
 <script>
 export default {
   name: 'input-box',
-  props: ['placeholder', 'icon'],
+  props: ['placeholder', 'icon', 'init'],
   data () {
     return {
-      input: ''
+      value: this.init || ''
     }
   },
   methods: {
     submit () {
-      if (this.input) this.$emit('onChange', this.input)
+      if (this.value) this.$emit('onChange', this.value)
     }
   }
 }

@@ -45,8 +45,9 @@ export default {
   padding: 40px 100px;
 
   .container {
-      max-width: 1200px;
-      margin: 0 auto;
+    width: 1280px;
+    max-width: 100%;
+    margin: 0 auto;
   }
 
   h1, h2 {

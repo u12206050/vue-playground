@@ -1,6 +1,7 @@
 const baseApi = 'http://demo3388642.mockable.io'
 module.exports = {
   menuApi: baseApi + '/menus/main',
+  searchApi: baseApi + '/search/query',
   hero: {
     title: 'Hva er realfag',
     image: {

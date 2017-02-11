@@ -2,7 +2,7 @@
   <md-toolbar class="header">
     <router-link to="/" class="logo"><img src="../assets/logo.png"></router-link>
     <md-layout md-align="end">
-      <input-box placeholder="Søk" icon="search"></input-box>
+      <input-box placeholder="Søk" icon="search" v-on:onChange="search"></input-box>
       <button v-on:click="openMenu()"><md-icon>menu</md-icon></button>
     </md-layout>
   </md-toolbar>
@@ -19,6 +19,9 @@ export default {
   methods: {
     openMenu () {
       window.eventBus.$emit('side-menu', 1)
+    },
+    search (_query) {
+      window.rootRouter.push({name: 'Search', params: {query: _query}})
     }
   }
 }
@@ -28,6 +31,7 @@ export default {
 @import "../assets/mixin";
 
 .md-theme-default.md-toolbar.header {
+  z-index: 3;
   background-color: #fff;
   color: #333;
   width: 100%;
