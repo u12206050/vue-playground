@@ -2,12 +2,13 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from 'components/Hello'
 import Page from 'components/Page'
+import NotFound from 'components/NotFound'
 const Login = resolve => require(['components/Login.vue'], resolve)
 const Search = resolve => require(['components/SearchPage.vue'], resolve)
 
 Vue.use(Router)
 
-window.rootRouter = new Router({
+export default new Router({
   mode: 'history',
   routes: [
     {
@@ -29,8 +30,11 @@ window.rootRouter = new Router({
       path: '/search/:query',
       name: 'Search',
       component: Search
+    },
+    {
+      path: '/404',
+      name: 'NotFound',
+      component: NotFound
     }
   ]
 })
-
-export default window.rootRouter

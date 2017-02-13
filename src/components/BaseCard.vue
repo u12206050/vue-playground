@@ -59,7 +59,7 @@ export default {
     links () {
       if (this.data && this.data.links) {
         return this.data.links
-      } else if (this.type === 'full') {
+      } else if (this.type === 'full' || this.type === 'blog') {
         return null
       } else {
         return [
@@ -94,7 +94,7 @@ export default {
   methods: {
     navigate (path) {
       console.log('navigating... %s', path)
-      window.rootRouter.push(path)
+      this.$router.push(path)
     }
   }
 }

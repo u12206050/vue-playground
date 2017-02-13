@@ -69,7 +69,7 @@ export default {
   },
   methods: {
     newSearch (_query) {
-      window.rootRouter.push({name: 'Search', params: {query: _query}})
+      this.$router.push({name: 'Search', params: {query: _query}})
     },
     startSearch () {
       this.loading = true

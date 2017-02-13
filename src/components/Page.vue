@@ -2,11 +2,14 @@
   <div class="page">
     <div class="loader" :class="{'ready': !show}"></div>
     <div class="container" :class="{'ready': show}">
-      <div class="blue-back"></div>
+      <div v-if="blueBack" class="blue-back"></div>
       <md-layout md-gutter class="hero">
-        <base-card type="full" :data="hero"></base-card>
+        <base-card :type="heroType" :data="hero"></base-card>
       </md-layout>
       <md-layout md-gutter class="container">
+        <md-layout v-if="page && page.body" md-flex-xsmall="100" md-flex-large="100">
+          <div v-html="page.body"></div>
+        </md-layout>
         <md-layout md-flex-xsmall="100" md-flex-large="100">
           <fact-box></fact-box>
         </md-layout>
@@ -55,6 +58,17 @@ export default {
       this.loadPage()
     }
   },
+  computed: {
+    blueBack () {
+      return this.page && this.page._entitytype === 'article'
+    },
+    heroType () {
+      if (this.page && this.page._entitytype === 'blog') {
+        return 'blog'
+      }
+      return 'full'
+    }
+  },
   methods: {
     loadPage () {
       var self = this
@@ -63,11 +77,12 @@ export default {
         axios.get('http://demo3388642.mockable.io/posts/' + this.uri)
         .then(function (response) {
           if (response.data) {
-            self.page = response.data
+            var _p = self.page = response.data
             self.hero = {
-              title: self.page.title,
+              title: _p.title,
               excerpt: ' ',
-              image: self.page.image
+              image: _p.image,
+              author: _p.author
             }
           }
           self.show = true
@@ -75,6 +90,7 @@ export default {
         .catch(function (error) {
           console.warn('Loading page error: ' + error.message || error.response.status)
           self.show = true
+          self.$router.replace('/404')
         })
       }, 1000)
     }

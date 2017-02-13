@@ -3,6 +3,8 @@
     <div class="hello" v-if="show">
       <img src="../assets/logo.svg">
       <h1>{{ msg }}</h1>
+      <router-link to="/page/article" class="alink-internal">Article Example</router-link><br/>
+      <router-link to="/page/blog" class="alink-internal">Blog Example</router-link><br/>
       <transition name="bounce">
         <login v-if="viewLogin"></login>
       </transition>
