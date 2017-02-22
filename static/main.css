@@ -15,7 +15,7 @@ html, body {
 *::after {
   box-sizing: border-box;
   font-family: "Agenda Light","Open Sans",Helvetica,Arial,sans-serif;
-  font-weight: 300;
+  font-weight: normal;
 }
 
 button {

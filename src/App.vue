@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <app-header></app-header>
-    <side-menu></side-menu>
+    <side-menu name="Hovedmeny"></side-menu>
     <router-view></router-view>
     <app-footer></app-footer>
-    <footer-menu :links="links" facebook="https://www.facebook.com/"></footer-menu>
+    <footer-menu :links="links" :facebook="fb_address"></footer-menu>
   </div>
 </template>
 
@@ -22,26 +22,32 @@ export default {
     'app-footer': Footer,
     'footer-menu': FooterMenu
   },
-  data () {
-    return {
-      links: [
-        {
-          url: '/',
-          title: 'Home',
-          external: false
-        },
-        {
-          url: '/login',
-          title: 'Login',
-          external: false
-        },
-        {
-          url: '/page/article',
-          title: 'Article Template',
-          external: false
-        }
-      ]
+  computed: {
+    footer () {
+      if (this.$store.state.siteSettings) {
+        return this.$store.state.siteSettings.footer || {}
+      }
+      return {}
+    },
+    links () {
+      return this.footer.links || []
+    },
+    fb_address () {
+      return this.footer.facebook_link || ''
     }
+  },
+  created () {
+    this.$http.get(this.$store.state.api.settings)
+    .then(res => {
+      this.$store.registerModule('siteSettings', {
+        namespaced: true,
+        state: res.data
+      })
+    })
+    .catch(error => {
+      console.warn('Unable to load site settings. Site is not in functioning order')
+      console.warn('Error: ' + error.message || error.response.status)
+    })
   }
 }
 </script>

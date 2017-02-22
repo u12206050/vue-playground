@@ -17,7 +17,7 @@
             </transition>
           </md-card>
           <div class="loader" :class="{'active': loading}"></div>
-          <md-button v-if="!loading && max < total" @click.native="page()">Vis flere</md-button>
+          <md-button v-if="!loading && tail < total" @click.native="page()">Vis flere</md-button>
       </div>
       <div v-else class="row none">
           <h3>Søket ditt for: <span>{{query}}</span>, ga ingen treff. Prøv på nytt med et annet søkeord.</h3>
@@ -27,16 +27,14 @@
 </template>
 
 <script>
-import axios from 'axios'
 import InputBox from 'components/InputBox'
 
 export default {
-  name: 'page',
+  name: 'search-page',
   data () {
     return {
       show: false,
-      searchApi: require('../settings.js').searchApi,
-      query: this.$route.params.query,
+      query: '',
       results: [],
       ids: [],
       loading: true,
@@ -47,19 +45,12 @@ export default {
   created () {
     setTimeout(() => {
       this.show = true
-    }, 500)
+    }, 10)
+    this.query = this.$route.params.query
     this.startSearch()
   },
   components: {
     'input-box': InputBox
-  },
-  computed: {
-    total () {
-      return this.ids.length
-    },
-    max () {
-      return this.curP * this.perPage >= this.total ? this.total : this.curP * this.perPage
-    }
   },
   watch: {
     '$route' (to, from) {
@@ -67,53 +58,70 @@ export default {
       this.startSearch()
     }
   },
+  computed: {
+    postApi () {
+      return this.$store.state.api.posts
+    },
+    searchApi () {
+      return this.$store.state.api.query
+    },
+    total () {
+      return this.ids.length
+    },
+    offset () {
+      return (this.curP - 1) * this.perPage
+    },
+    tail () {
+      return this.curP * this.perPage >= this.total ? this.total : this.curP * this.perPage
+    }
+  },
   methods: {
     newSearch (_query) {
       this.$router.push({name: 'Search', params: {query: _query}})
     },
     startSearch () {
-      this.loading = true
-      this.ids = []
-      this.results = []
-      var self = this
-      setTimeout(() => {
-        axios.get(this.searchApi)
-        .then(function (response) {
-          self.ids = response.data
-          self.getResults(1)
+      if (this.query) {
+        this.loading = true
+        this.ids = []
+        this.results = []
+        this.$http.get(this.searchApi + '/' + this.query)
+        .then(res => {
+          this.ids = res.data
+          this.getResults(1)
         })
-        .catch(function (error) {
-          console.warn('SideMenu has error: ' + error.message || error.response.status)
-          self.loading = false
+        .catch(error => {
+          console.warn('SearchPage has error: ' + error.message || error.response.status)
+          this.loading = false
         })
-      }, 100)
+      }
     },
     getResults (p) {
       this.loading = true
       this.curP = p
-      console.log('total %s, max %s', this.total, this.max)
-      let start = (this.curP - 1) * this.perPage
       let getids = []
-      for (let i = start; i < this.max; i++) {
+      for (let i = this.offset; i < this.tail; i++) {
         getids.push(this.ids[i])
       }
-      console.log('Getting results for %s', getids)
-      var self = this
-      setTimeout(() => {
-        axios.get('http://demo3388642.mockable.io/posts')
-        .then(function (response) {
-          self.results.push(...response.data)
-          self.loading = false
+      this.$http.get(this.postApi + '/' + getids.join(','))
+      .then(res => {
+        var list = []
+        Object.keys(res.data).forEach(e => {
+          if (res.data.hasOwnProperty(e)) {
+            list.push(res.data[e])
+          }
         })
-        .catch(function (error) {
-          console.warn('SideMenu has error: ' + error.message || error.response.status)
-          self.loading = false
-        })
-      }, 1000)
+
+        this.results.push(...list)
+        this.loading = false
+      })
+      .catch(error => {
+        console.warn('SearchPage has error: ' + error.message || error.response.status)
+        this.loading = false
+      })
     },
-    page () {
-      if (!this.loading && this.max < this.total) {
-        this.getResults(this.curP + 1)
+    page (pageNum) {
+      if (!this.loading && this.tail < this.total) {
+        this.getResults(pageNum || this.curP + 1)
       }
     }
   }

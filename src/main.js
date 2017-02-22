@@ -1,17 +1,17 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import Vuex from 'vuex'
 import VueMaterial from 'vue-material'
 import 'keen-ui/src/bootstrap'
+import axios from 'axios'
 
 import App from './App'
 import router from './router'
+import store from './stores'
 
-window.eventBus = new Vue()
-
-Vue.use(Vuex)
 Vue.use(VueMaterial)
+
+Vue.prototype.$http = axios
 
 Vue.material.registerTheme('default', {
   primary: {
@@ -32,7 +32,8 @@ Vue.material.registerTheme('default', {
 /* eslint-disable no-new */
 var root = new Vue({
   router,
-  template: '<App/>',
+  store,
+  template: '<app/>',
   components: { App }
 })
 

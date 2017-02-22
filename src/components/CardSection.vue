@@ -21,13 +21,16 @@ export default {
   },
   methods: {
     lgsize (card) {
-      if (this.type === 'square') return 50
+      if (this.type === 'preview') return 50
       if (card._entitytype && card._entitytype === 'big_card') return 100
       return 50
     },
     cardType (card) {
-      if (this.type) return this.type
-      if (card._entitytype && card._entitytype === 'big_card') return 'square'
+      if (this.type) {
+        if (this.type === 'preview') return 'square'
+        return this.type
+      }
+      if (card._entitytype && card._entitytype === 'big_card') return 'preview'
     }
   }
 }
@@ -39,6 +42,7 @@ export default {
 
 .md-layout {
   justify-content: center;
+  align-items: center;
 }
 
 </style>

@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     openMenu () {
-      window.eventBus.$emit('side-menu', 1)
+      this.$store.commit('sideMenu/toggleMenu', true)
     },
     search (_query) {
       this.$router.push({name: 'Search', params: {query: _query}})

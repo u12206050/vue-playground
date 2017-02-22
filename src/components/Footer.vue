@@ -1,25 +1,17 @@
 <template>
   <div class="footer">
-    <md-layout md-gutter class="container">
-      <md-layout md-flex-xsmall="100" md-flex-small="50">
-        <h2>Essential Links</h2>
-        <ul>
-          <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-          <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-          <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-          <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-          <br>
-          <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
-        </ul>
+    <md-layout md-gutter class="container" md-align="center">
+      <md-layout md-flex-xsmall="100" md-flex="50" class="info">
+        <h3>{{footer.title}}</h3>
+        <div v-html="footer.body" class="html"></div>
       </md-layout>
-      <md-layout md-flex-xsmall="100" md-flex-small="50">
-        <h2>Ecosystem</h2>
-        <ul>
-          <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-          <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-          <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-          <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-        </ul>
+      <md-layout md-flex-xsmall="100" md-flex="50" class="partners">
+        <a href="http://www.realfagsrekruttering.no" target="_blank">
+          <img src="../assets/NSR_logo.svg" alt="Nasjonalt Senter for Realfagsrekruttering">
+        </a>
+        <a href="http://www.regjeringen.no/kd" target="_blank" id="kd">
+          <img src="../assets/kd_hvit.svg" alt="Kunnskapsdepartementet">
+        </a>
       </md-layout>
     </md-layout>
   </div>
@@ -27,11 +19,19 @@
 
 <script>
 export default {
-  name: 'app-footer'
+  name: 'app-footer',
+  computed: {
+    footer () {
+      if (this.$store.state.siteSettings) {
+        return this.$store.state.siteSettings.footer || {}
+      }
+      return {}
+    }
+  }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "../assets/mixin";
 
 .footer {
@@ -45,30 +45,45 @@ export default {
   padding: 40px 100px;
 
   .container {
-    width: 1280px;
+    -ms-flex-pack: space-between;
+    justify-content: space-between;
+    -ms-flex-align: space-between;
     max-width: 100%;
     margin: 0 auto;
-  }
 
-  h1, h2 {
-    font-weight: normal;
-    width: 100%;
-    text-align: center;
-  }
+    .info {
+      display: block;
+      text-align: left;
+      h3 {
+        display: block;
+      }
 
-  ul {
-    width: 100%;
-    list-style-type: none;
-    padding: 0;
-  }
+      .html {
+        display: block;
 
-  li {
-    display: inline-block;
-    margin: 0 10px;
-  }
+        p {
+          font-size: 12px;
+          margin: 2px;
+        }
+      }
+    }
 
-  a {
-    color: #42b983;
+    .partners {
+      margin-top: 10px;
+      display: block;
+      text-align: center;
+
+      a {
+        width: 100%;
+        display: block;
+
+        img {
+          width: 250px;
+          max-width: 100%;
+          margin: 10px;
+        }
+      }
+    }
   }
 }
 </style>

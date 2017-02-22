@@ -1,7 +1,7 @@
 <template>
   <transition name="slide">
     <span v-show="show">
-      <md-card :class="[{'md-with-hover': withHover}, type]" v-on:click.native="navigate(links[0].url)">
+      <md-card :class="[{'md-with-hover': withHover}, type]" v-on:click.native="navigate()">
         <md-card-media :md-ratio="imageRatio">
           <img :src="imageSrc" alt="Random Image">
           <h2 v-if="redTitle">{{title}}</h2>
@@ -22,9 +22,13 @@
             {{excerpt}}
           </md-card-content>
           <md-card-actions v-if="links">
-            <md-button v-for="link of links" v-on:click.native.stop="navigate(link.url)">{{link.title}}</md-button>
+            <md-button v-for="link of links">
+              <router-link v-if="!link.external" :to="link.url" class="alink-internal">{{link.title}}</router-link>
+              <a v-else-if="link.external" target="_blank" :href="link.url" class="alink-external">{{link.title}}</a>
+            </md-button>
           </md-card-actions>
         </md-card-area>
+        <md-ink-ripple />
       </md-card>
     </span>
   </transition>
@@ -49,12 +53,12 @@ export default {
     title () {
       if (this.data && this.data.title) {
         return this.data.title
-      } else return 'Random title'
+      } else return ''
     },
     excerpt () {
       if (this.data && this.data.excerpt) {
         return this.data.excerpt
-      } else return 'Lorem ipsum dolor sit amet, consectetur adipiscing elit'
+      } else return ''
     },
     links () {
       if (this.data && this.data.links) {
@@ -79,13 +83,14 @@ export default {
     },
     imageSrc () {
       if (this.data && this.data.image) {
+        if (typeof this.data.image === 'string') return this.data.image
         if (this.data.image.styles && this.data.image.styles[this.type]) {
           return this.data.image.styles[this.type]
         } else return this.data.image.src
-      } else return 'https://unsplash.it/' + (this.type === 'square' ? '900' : '1600/900')
+      } else return 'https://unsplash.it/g/' + (this.type === 'square' ? '900' : '1600/900') + '?random&ts=' + Date.now()
     },
     redTitle () {
-      return this.type === 'blog' || this.type === 'full'
+      return ['blog', 'full', 'hero'].indexOf(this.type) > -1
     },
     showAuthor () {
       return this.type === 'blog'
@@ -93,8 +98,10 @@ export default {
   },
   methods: {
     navigate (path) {
-      console.log('navigating... %s', path)
-      this.$router.push(path)
+      if (!path && this.links && this.links.length) {
+        path = this.links[0].url
+      }
+      if (path) setTimeout(() => this.$router.push(path), 200)
     }
   }
 }
@@ -129,6 +136,14 @@ span {
     }
   }
 
+  &.hero {
+    .md-card-actions {
+      button:last-child {
+        border: 2px solid $blue;
+      }
+    }
+  }
+
   .md-avatar {
     width: 60px;
     height: 60px;
@@ -151,11 +166,16 @@ span {
     flex: 1;
     align-items: flex-end;
     button.md-button.md-theme-default {
-      color: $blue;
+      a {
+        color: $blue;
+      }
 
       &:hover {
         background: $blue;
-        color: #fff;
+        a {
+          color: #fff;
+          text-decoration: none;
+        }
       }
     }
   }
