@@ -1,23 +1,34 @@
 <template>
   <md-layout md-gutter>
-    <md-layout v-for="card of cards" md-flex-xsmall="100" :md-flex-large="lgsize(card)">
+    <md-layout v-for="card of view_cards" md-flex-xsmall="100" :md-flex-large="lgsize(card)"  :md-flex-xlarge="lgsize(card)">
       <base-card :type="cardType(card)" :data="card"></base-card>
     </md-layout>
+    <infinite-loading :on-infinite="onInfinite" ref="infiniteLoading">
+      <span slot="no-more">
+        <hr/>
+      </span>
+    </infinite-loading>
   </md-layout>
 </template>
 
 <script>
-import BaseCard from './BaseCard'
-
+import InfiniteLoading from 'vue-infinite-loading'
 export default {
-  name: 'section',
+  name: 'card-section',
   props: ['type', 'cards'],
   data () {
     return {
+      view_cards: []
     }
   },
   components: {
-    'base-card': BaseCard
+    InfiniteLoading
+  },
+  watch: {
+    cards (_cards) {
+      this.view_cards = []
+      this.$refs.infiniteLoading.$emit('$InfiniteLoading:reset')
+    }
   },
   methods: {
     lgsize (card) {
@@ -31,6 +42,20 @@ export default {
         return this.type
       }
       if (card._entitytype && card._entitytype === 'big_card') return 'preview'
+    },
+    onInfinite () {
+      if (this.view_cards.length === this.cards.length) {
+        this.$refs.infiniteLoading.$emit('$InfiniteLoading:complete')
+      } else {
+        setTimeout(() => {
+          let end = this.view_cards.length + 8
+          end = end > this.cards.length ? this.cards.length : end
+          for (let i = this.view_cards.length; i < end; i++) {
+            this.view_cards.push(this.cards[i])
+          }
+          this.$refs.infiniteLoading.$emit('$InfiniteLoading:loaded')
+        }, 500)
+      }
     }
   }
 }

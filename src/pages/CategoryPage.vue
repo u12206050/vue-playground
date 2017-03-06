@@ -6,15 +6,12 @@
       <card-section :cards="cards" type="preview"></card-section>
       <div class="loader" v-bind:class="{'active': loading}"></div>
       <button class="m-btn" v-if="!loading && tail < total" @click="page(curP+1)">Last ned flere {{tail}}/{{total}}</button>
-
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import CardSection from 'components/CardSection'
-
 export default {
   name: 'category-page',
   props: ['node'],
@@ -31,9 +28,6 @@ export default {
   },
   created () {
     this.loadNode()
-  },
-  components: {
-    'card-section': CardSection
   },
   watch: {
     node: 'loadNode'

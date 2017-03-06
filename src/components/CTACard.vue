@@ -30,11 +30,29 @@ export default {
     width: 100%;
 
     h3 {
-        font-size: 28px;
+        font-size: 34px;
+
+        @media all and (max-width:960px) {
+          font-size: 28px;
+        }
+        @media all and (max-width:600px) {
+          font-size: 26px;
+        }
     }
 
     p {
-        font-size: 16px;
+        font-weight: 300;
+        font-size: 24px;
+        line-height: 26px;
+
+        @media all and (max-width:960px) {
+          font-size: 20px;
+          line-height: 22px;
+        }
+        @media all and (max-width:600px) {
+          font-size: 18px;
+          line-height: 20px;
+        }
     }
 
     .actions {
@@ -45,29 +63,33 @@ export default {
         left: 0;
 
         button {
+            display: block;
             margin: 10px auto;
             min-width: 50%;
-            padding: 4px 16px;
             background: $red;
             color: #fff;
 
             a {
+                display: block;
+                padding: 4px;
+                width: 100%;
                 color: #fff;
+                font-weight: 600;
+                text-transform: capitalize;
+                text-decoration: none;
+            }
+
+            &:hover {
+                background: #fff;
+                a {
+                    color: $red;
+                }
             }
         }
     }
 
     @media all and (max-width:960px) {
         padding: 10px;
-
-        h3 {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-
-        p {
-            font-size: 14px;
-        }
 
         .actions {
             position: relative;

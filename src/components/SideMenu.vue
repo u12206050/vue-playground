@@ -1,6 +1,6 @@
 <template>
   <md-theme md-name="side-menu" v-if="activeMenu">
-    <md-sidenav class="md-right" ref="menu" @close="close()">
+    <md-sidenav class="md-right" ref="menu" @open="open()" @close="close()">
       <div class="menu_title">
         <button class="btn-l" v-if="activeMenu.__parent" v-on:click="activeMenu = activeMenu.__parent"><md-icon class="icon">keyboard_arrow_left</md-icon></button>
         <button class="btn-r" v-on:click="closeMenu()"><md-icon class="icon">close</md-icon></button>
@@ -43,6 +43,11 @@ export default {
     },
     isOpen () {
       return this.$store.state.sideMenu && this.$store.state.sideMenu.open
+    },
+    menuData () {
+      if (this.$store.state.sideMenu) {
+        return JSON.parse(JSON.stringify(this.$store.state.sideMenu.data))
+      }
     }
   },
   watch: {
@@ -51,33 +56,64 @@ export default {
       if (open) {
         this.openMenu(true)
       } else this.closeMenu(true)
+    },
+    menuData (data) {
+      if (data) {
+        this.layers = []
+        let getLayers = (menu, parent = null) => {
+          menu.__parent = parent
+          if (menu.links && menu.links.length) {
+            if (menu.url) {
+              menu.links = [{
+                title: menu.title,
+                url: menu.url,
+                external: !!menu.external
+              }, ...menu.links]
+            }
+            menu.links.forEach(l => {
+              if (l.links && l.links.length) {
+                getLayers(l, menu)
+              }
+            })
+            this.layers.push(menu)
+          }
+        }
+        getLayers(data)
+        this.activeMenu = data
+      }
     }
   },
   created () {
-    this.$store.registerModule('sideMenu', {
-      namespaced: true,
-      state: {
-        open: false
-      },
-      mutations: {
-        toggleMenu (state, open) {
-          if (typeof open !== 'undefined' && open !== null) {
-            if (state.open !== !!open) {
-              state.open = !!open
+    if (!this.$store.state.sideMenu) {
+      this.$store.registerModule('sideMenu', {
+        namespaced: true,
+        state: {
+          open: false,
+          data: null
+        },
+        mutations: {
+          toggleMenu (state, open) {
+            if (typeof open === 'undefined' || open === null) {
+              state.open = !state.open
+            } else {
+              if (state.open !== !!open) {
+                state.open = !!open
+              }
             }
-          } else {
-            state.open = !state.open
+          },
+          loadData (state, data) {
+            state.data = data
           }
         }
-      }
-    })
-    this.$http.get(this.menuApi)
-    .then(res => {
-      this.generateLayers(res.data)
-    })
-    .catch(error => {
-      console.warn('SideMenu has error: ' + error.message || error.response.status)
-    })
+      })
+      this.$http.get(this.menuApi)
+      .then(res => {
+        this.$store.commit('sideMenu/loadData', res.data)
+      })
+      .catch(error => {
+        console.warn('Loading SideMenu has error: ' + error.message || error.response.status)
+      })
+    }
   },
   methods: {
     openMenu (silent) {
@@ -88,31 +124,12 @@ export default {
       this.$refs.menu.close()
       if (!silent) this.$store.commit('sideMenu/toggleMenu', false)
     },
-    generateLayers (menuData) {
-      this.layers = []
-      let getLayers = (menu, parent = null) => {
-        menu.__parent = parent
-        if (menu.links && menu.links.length) {
-          if (menu.url) {
-            menu.links = [{
-              title: menu.title,
-              url: menu.url,
-              external: !!menu.external
-            }, ...menu.links]
-          }
-          menu.links.forEach(l => {
-            if (l.links && l.links.length) {
-              getLayers(l, menu)
-            }
-          })
-          this.layers.push(menu)
-        }
-      }
-      getLayers(menuData)
-      this.activeMenu = menuData
-    },
     close () {
-      this.activeMenu = this.menuData
+      // this.activeMenu = this.menuData
+      this.$store.commit('sideMenu/toggleMenu', false)
+    },
+    open () {
+      this.$store.commit('sideMenu/toggleMenu', true)
     }
   }
 }

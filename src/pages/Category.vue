@@ -16,8 +16,6 @@
 </template>
 
 <script>
-import CardSection from 'components/CardSection'
-
 export default {
   name: 'category',
   data () {
@@ -27,9 +25,6 @@ export default {
       category: '',
       results: []
     }
-  },
-  components: {
-    'card-section': CardSection
   },
   created () {
     setTimeout(() => {

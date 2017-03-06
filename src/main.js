@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import VueMaterial from 'vue-material'
+import VueHead from 'vue-head'
 import 'keen-ui/src/bootstrap'
 import axios from 'axios'
 
@@ -10,6 +11,7 @@ import router from './router'
 import store from './stores'
 
 Vue.use(VueMaterial)
+Vue.use(VueHead)
 
 Vue.prototype.$http = axios
 
@@ -28,6 +30,10 @@ Vue.material.registerTheme('default', {
     hue: 100
   }
 })
+
+Vue.component('BaseCard', require('components/BaseCard.vue'))
+Vue.component('CardSection', require('components/CardSection.vue'))
+Vue.component('InputBox', require('components/InputBox.vue'))
 
 /* eslint-disable no-new */
 var root = new Vue({

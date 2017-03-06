@@ -1,6 +1,6 @@
 <template>
   <div class="search">
-    <input type="text" v-bind:placeholder="placeholder" @keyup.enter="submit" v-model="value"><button><md-icon>{{icon}}</md-icon></button>
+    <input type="text" v-bind:placeholder="placeholder" @keyup.enter="submit" v-model="value"><button @click="submit"><md-icon>{{icon}}</md-icon></button>
   </div>
 </template>
 
@@ -10,12 +10,24 @@ export default {
   props: ['placeholder', 'icon', 'init'],
   data () {
     return {
-      value: this.init || ''
+      value: '',
+      delay: null
     }
   },
   methods: {
     submit () {
-      if (this.value) this.$emit('onChange', this.value)
+      if (this.value) this.$emit('onSubmit', this.value)
+    }
+  },
+  watch: {
+    init (val) {
+      this.value = val || ''
+    },
+    value (val) {
+      clearTimeout(this.delay)
+      this.delay = setTimeout(() => {
+        this.$emit('onChange', this.value)
+      }, 250)
     }
   }
 }

@@ -1,26 +1,32 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from 'pages/Hello'
+// import Hello from 'pages/Hello'
 import BasePage from 'pages/BasePage'
 import NotFound from 'pages/NotFound'
-const Login = resolve => require(['components/Login.vue'], resolve)
+// const Login = resolve => require(['components/Login.vue'], resolve)
 const Search = resolve => require(['pages/SearchPage.vue'], resolve)
 const Category = resolve => require(['pages/Category.vue'], resolve)
+const YrkerPage = resolve => require(['pages/YrkerPage.vue'], resolve)
 
 Vue.use(Router)
 
 export default new Router({
   mode: 'history',
   routes: [
+    // {
+    //   path: '/login',
+    //   name: 'Login',
+    //   component: Login
+    // },
+    // {
+    //   path: '/hello',
+    //   name: 'Hello',
+    //   component: Hello
+    // },
     {
-      path: '/login',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/hello',
-      name: 'Hello',
-      component: Hello
+      path: '/yrker',
+      name: 'Yrker',
+      component: YrkerPage
     },
     {
       path: '/category/:type?',
@@ -28,7 +34,7 @@ export default new Router({
       component: Category
     },
     {
-      path: '/search/:query',
+      path: '/search/:query?',
       name: 'Search',
       component: Search
     },
@@ -36,6 +42,10 @@ export default new Router({
       path: '/404',
       name: 'NotFound',
       component: NotFound
+    },
+    {
+      path: '/yrker/:yrker',
+      component: BasePage
     },
     {
       path: '**',

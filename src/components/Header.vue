@@ -3,19 +3,14 @@
     <router-link to="/" class="logo"><img src="../assets/logo.png"></router-link>
     <md-layout md-align="end">
       <input-box placeholder="Søk" icon="search" v-on:onChange="search"></input-box>
-      <button v-on:click="openMenu()"><md-icon>menu</md-icon></button>
+      <button class="menu_button" v-on:click="openMenu()"><md-icon>menu</md-icon><span>Meny</span></button>
     </md-layout>
   </md-toolbar>
 </template>
 
 <script>
-import InputBox from 'components/InputBox'
-
 export default {
   name: 'app-header',
-  components: {
-    'input-box': InputBox
-  },
   methods: {
     openMenu () {
       this.$store.commit('sideMenu/toggleMenu', true)
@@ -38,6 +33,7 @@ export default {
   text-align: right;
   margin-bottom: 60px;
   box-shadow: 0px 2px 2px #505050;
+  padding: 20px 40px;
 
   img {
     height: 30px;
@@ -45,6 +41,30 @@ export default {
 
   .search {
     width: 250px;
+    padding: 4px 0;
+  }
+
+  .menu_button {
+    span {
+      font-size: 20px;
+      font-weight: 400;
+      padding: 2px;
+      margin: 0 10px;
+      border-bottom: 1px solid #000;
+    }
+
+    i {
+      display: none;
+    }
+
+    @media all and (max-width:768px) {
+      span {
+        display: none;
+      }
+      i {
+        display: block;
+      }
+    }
   }
 
   a:not(.logo) {

@@ -1,65 +1,16 @@
 <template>
   <md-card class="accordion">
-    <ui-collapsible :open="active == 0" @open="active = 0" :removeIcon="true">
+    <ui-collapsible v-for="(item, index) of items" :open="active == index" @open="active = index" :removeIcon="true">
       <div slot="header">
-        <md-icon class="icon-area">movie</md-icon>
+        <md-icon class="icon-area">{{item.icon}}</md-icon>
         <div class="title-area">
-          <h3>This is title</h3>
-          <p>This is byline</p>
+          <h3>{{item.title}}</h3>
+          <p>{{item.byline}}</p>
         </div>
         <span class="toggle-icon"></span>
       </div>
-      <div class="body">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur nemo suscipit ipsa molestias, tempora dolor natus modi et incidunt tenetur!
-      </div>
+      <div class="body" v-html="item.body"></div>
     </ui-collapsible>
-
-    <ui-collapsible :open="active == 1" @open="active = 1" :removeIcon="true">
-      <div slot="header">
-        <md-icon class="icon-area">hd</md-icon>
-        <div class="title-area">
-          <h3>This is title</h3>
-        </div>
-        <span class="toggle-icon"></span>
-      </div>
-      <div class="body">
-        <b>Howdy!</b>
-
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem dolore, numquam inventore esse consequatur doloribus pariatur accusantium voluptatum veritatis soluta corrupti impedit, asperiores accusamus! Ullam perferendis, ipsum officia consequatur quam! Sapiente nisi quam voluptates ipsam consequatur autem culpa repudiandae dignissimos.</p>
-
-        <a tabindex="0">A link here</a>
-
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dolorem dolore, numquam inventore esse consequatur doloribus pariatur accusantium voluptatum veritatis soluta corrupti impedit, asperiores accusamus! Ullam perferendis, ipsum officia consequatur quam! Sapiente nisi quam voluptates ipsam consequatur autem culpa repudiandae dignissimos.</p>
-      </div>
-    </ui-collapsible>
-
-    <ui-collapsible :open="active == 2" @open="active = 2" :removeIcon="true">
-      <div slot="header">
-        <md-icon class="icon-area">note</md-icon>
-        <div class="title-area">
-          <h3>This is title</h3>
-        </div>
-        <span class="toggle-icon"></span>
-      </div>
-      <div class="body">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur nemo suscipit ipsa molestias, tempora dolor natus modi et incidunt tenetur!
-      </div>
-    </ui-collapsible>
-
-    <ui-collapsible :open="active == 3" @open="active = 3" :removeIcon="true">
-      <div slot="header">
-        <md-icon class="icon-area">info</md-icon>
-        <div class="title-area">
-          <h3>This is title</h3>
-          <p>This is byline</p>
-        </div>
-        <span class="toggle-icon"></span>
-      </div>
-      <div class="body">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consectetur nemo suscipit ipsa molestias, tempora dolor natus modi et incidunt tenetur!
-      </div>
-    </ui-collapsible>
-    </div>
   </md-card>
 </template>
 
@@ -68,13 +19,28 @@ import UiCollapsible from 'keen-ui/lib/UiCollapsible'
 
 export default {
   name: 'accordion',
+  props: ['init'],
   data () {
     return {
-      active: -1
+      active: -1,
+      items: []
     }
   },
   components: {
     'ui-collapsible': UiCollapsible
+  },
+  created () {
+    this.loadInit()
+  },
+  watch: {
+    'init': this.loadInit
+  },
+  methods: {
+    loadInit () {
+      if (this.init) {
+        this.items = this.init.items
+      }
+    }
   }
 }
 </script>
@@ -110,7 +76,8 @@ export default {
 
     h3 {
       margin: 0 5px;
-      color: $blue;
+      font-size: 24px;
+      color: #000;
     }
 
     .title-area {

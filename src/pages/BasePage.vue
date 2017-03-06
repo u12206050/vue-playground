@@ -3,8 +3,8 @@
     <div class="page-loader" v-bind:class="{ active: !view }"></div>
     <component v-bind:is="view" :node="node">
     </component>
-    <div class="page-info" v-if="loading">
-      {{loading}}
+    <div class="page-info" v-if="!view">
+      Loading {{uri}}
     </div>
   </div>
 </template>
@@ -12,22 +12,18 @@
 <script>
 import Vue from 'vue'
 
-Vue.component('Page', function (resolve) {
-  require(['./Page.vue'], resolve)
-})
-Vue.component('LandingPage', function (resolve) {
-  require(['./LandingPage.vue'], resolve)
-})
+import Page from './Page'
+import LandingPage from './LandingPage'
+import NotFound from './NotFound'
+
 Vue.component('CategoryPage', function (resolve) {
   require(['./CategoryPage.vue'], resolve)
 })
-import NotFound from './NotFound'
 
 export default {
   data () {
     return {
       uri: false,
-      node: null,
       view: null
     }
   },
@@ -38,52 +34,96 @@ export default {
     postApi () {
       return this.$store.state.api.posts
     },
-    loading () {
-      return this.uri ? 'Loading ' + this.uri + '...' : ''
+    node () {
+      if (this.$store.state.pages) {
+        if (!this.$store.state.pages.cache[this.uri]) {
+          this.$store.dispatch('pages/load', this.uri)
+        }
+        return this.$store.state.pages.cache[this.uri]
+      }
+      return null
+    },
+    seo_title () {
+      return {
+        inner: this.node ? this.node.title : '',
+        complement: 'Velgriktig'
+      }
+    },
+    seo_meta () {
+      if (!this.node) return []
+      let title = this.node.title
+      let description = this.node.excerpt || this.node.content || ''
+      let image = this.node.image || this.node.featured_image
+      if (typeof image === 'object') {
+        if (image.styles) {
+          image = image.styles['article'] || image.src
+        } else {
+          image = image.src
+        }
+      }
+      return [
+        // { name: 'description', content: '123456789' },
+        { n: 'application-name', c: 'Velgriktig' },
+        { n: 'description', c: description }, // id to replace intead of create element
+        { n: 'url', c: this.$store.state.api.site + this.node.uri },
+        // Twitter
+        { n: 'twitter:title', c: title },
+        { n: 'twitter:description', c: description },
+        // Google+ / Schema.org
+        { itemprop: 'name', c: title },
+        { itemprop: 'description', c: description },
+        // Facebook / Open Graph
+        // { property: 'fb:app_id', content: '123456789' },
+        { p: 'og:title', c: title },
+        { p: 'og:image', c: 'https://example.com/image.jpg' }
+      ]
     }
   },
   components: {
-    // LandingPage: LandingPage,
-    NotFound: NotFound
+    Page,
+    LandingPage,
+    NotFound
   },
   watch: {
-    '$route': 'fetchData'
+    '$route': 'fetchData',
+    node (_node) {
+      if (typeof _node === 'object') {
+        this.$store.commit('setActivePage', _node)
+        switch (this.node._entitytype) {
+          case 'post':
+            this.view = 'Page'
+            break
+          case 'landing_page':
+            this.view = 'LandingPage'
+            break
+          case 'category':
+            this.view = 'CategoryPage'
+            break
+          default: this.view = 'Page'
+        }
+
+        this.$emit('updateHead')
+      } else if (_node > 0) {
+        this.view = 'NotFound'
+      }
+    }
   },
   methods: {
     fetchData () {
-      this.node = null
       this.view = null
-      this.uri = this.$route.path
-      this.$http.get(this.postApi + this.$route.path)
-      .then(res => {
-        if (res.data) {
-          this.node = res.data
-          switch (this.node._entitytype) {
-            case 'post':
-              this.view = 'Page'
-              break
-            case 'landing_page':
-              this.view = 'LandingPage'
-              break
-            case 'category':
-              this.view = 'CategoryPage'
-              break
-            default: this.view = 'Page'
-          }
-        } else {
-          this.view = 'NotFound'
-        }
-        setTimeout(() => {
-          this.uri = false
-        }, 500)
-      })
-      .catch(error => {
-        console.warn('Loading page error: ' + error.message || error.response.status)
-        this.view = 'NotFound'
-        setTimeout(() => {
-          this.uri = false
-        }, 500)
-      })
+      if (this.$route.params.yrker) {
+        this.uri = '/nsr/yrker/' + this.$route.params.yrker
+      } else {
+        this.uri = '/posts/' + (this.$route.path || '/')
+      }
+    }
+  },
+  head: {
+    title: function () {
+      return this.seo_title
+    },
+    meta: function () {
+      return this.seo_meta
     }
   }
 }

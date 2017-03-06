@@ -2,9 +2,9 @@
   <div class="page" v-if="node">
     <div v-if="blueBack" class="blue-back"></div>
     <div class="container">
-      <md-layout md-gutter md-column-small md-row-large class="hero">
+      <md-layout md-gutter md-column-small md-row-medium md-row-large class="hero">
         <md-layout v-if="heroblock" md-flex-small="100"><base-card type="hero" :data="heroblock"></base-card></md-layout>
-        <md-layout md-flex-large="33" v-if="ctablock"><cta-card :data="ctablock"></cta-card></md-layout>
+        <md-layout md-flex-small="100" md-flex-large="33" v-if="ctablock"><cta-card :data="ctablock"></cta-card></md-layout>
       </md-layout>
       <md-layout md-gutter class="container">
         <card-section v-if="mainblocks" :cards="mainblocks" type="square"></card-section>
@@ -14,11 +14,7 @@
 </template>
 
 <script>
-import BaseCard from 'components/BaseCard'
 import CTACard from 'components/CTACard'
-import CardSection from 'components/CardSection'
-import Accordion from 'components/Accordion'
-import FactBox from 'components/FactBox'
 
 export default {
   name: 'landing-page',
@@ -38,11 +34,7 @@ export default {
     node: 'loadPage'
   },
   components: {
-    'base-card': BaseCard,
-    'cta-card': CTACard,
-    'card-section': CardSection,
-    'accordion': Accordion,
-    'fact-box': FactBox
+    'cta-card': CTACard
   },
   computed: {
     blueBack () {
@@ -59,6 +51,7 @@ export default {
     loadPage () {
       this.heroblock = null
       this.ctablock = null
+      this.$store.currentPage = this.node
       if (this.node.hero_section) {
         this.node.hero_section.forEach(b => {
           switch (b._entitytype) {
@@ -84,7 +77,7 @@ export default {
         this.mainblocks.push({
           _entitytype: b._entitytype,
           title: b.title || def.title,
-          excerpt: b.excerpt || def.excerpt,
+          excerpt: b.excerpt || def.excerpt || b.text,
           image: b.image || def.image
         })
       })
@@ -105,7 +98,6 @@ export default {
 
     .hero {
       position: relative;
-      padding: 0 5px;
 
       @media all and (max-width:960px) {
         > div {

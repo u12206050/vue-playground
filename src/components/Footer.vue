@@ -5,7 +5,7 @@
         <h3>{{footer.title}}</h3>
         <div v-html="footer.body" class="html"></div>
       </md-layout>
-      <md-layout md-flex-xsmall="100" md-flex="50" class="partners">
+      <md-layout md-flex-xsmall="100" md-flex="50" md-row-small md-row-medium class="partners">
         <a href="http://www.realfagsrekruttering.no" target="_blank">
           <img src="../assets/NSR_logo.svg" alt="Nasjonalt Senter for Realfagsrekruttering">
         </a>
@@ -44,6 +44,16 @@ export default {
   margin-top: 60px;
   padding: 40px 100px;
 
+  @media all and (max-width:768px) {
+    padding: 20px 50px;
+  }
+  @media all and (max-width:600px) {
+    padding: 10px 25px;
+  }
+  @media all and (max-width:480px) {
+    padding: 5px 12px;
+  }
+
   .container {
     -ms-flex-pack: space-between;
     justify-content: space-between;
@@ -56,6 +66,9 @@ export default {
       text-align: left;
       h3 {
         display: block;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #fff;
+        max-width: 300px;
       }
 
       .html {
@@ -70,17 +83,21 @@ export default {
 
     .partners {
       margin-top: 10px;
-      display: block;
+      // display: block;
       text-align: center;
 
       a {
         width: 100%;
-        display: block;
+        // display: block;
 
         img {
           width: 250px;
           max-width: 100%;
           margin: 10px;
+        }
+        @media all and (max-width:600px) {
+          width: 50%;
+          padding: 10px;
         }
       }
     }
